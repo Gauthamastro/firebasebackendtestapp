@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -20,51 +22,48 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+
 public class feed extends AppCompatActivity {
 
     TextView textName, email,id,phone;
     FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.Adapter mAdapter;
+    private ArrayList<String> mDataset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
+        mRecyclerView = findViewById(R.id.recycler_view);
+        mDataset = new ArrayList<>();
+
+        //Create data for the feed
+        for (int i = 0;i<100; i++){
+            mDataset.add("Welcome to #" + i);
+        }
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new MainAdapter(mDataset);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+
+
+
+
         mAuth = FirebaseAuth.getInstance();
-
-
-        textName = findViewById(R.id.username);
-        email = findViewById(R.id.email);
-        id = findViewById(R.id.unique_id);
-
         final FirebaseUser user = mAuth.getCurrentUser();
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         //Then we will get the GoogleSignInClient object from GoogleSignIn class
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-
-        textName.setText(user.getDisplayName());
-        email.setText(user.getEmail());
-        id.setText(user.getUid());
-
-        final Button signout = findViewById(R.id.signout);
-        signout.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Code here executes on main thread after user presses button
-                signout.setText("Clicked");
-                revokeUser();
-            }
-
-        });
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
