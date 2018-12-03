@@ -43,3 +43,4 @@ dependencies {
 apply plugin: 'com.google.gms.google-services'
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
 // This is a workaround only change it affter develeoping!
+android.defaultConfig.vectorDrawables.useSupportLibrary = true

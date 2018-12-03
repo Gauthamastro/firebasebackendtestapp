@@ -19,7 +19,9 @@
         <activity
             android:name=".feed"
             android:label="@string/title_activity_feed"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".newpost" />
+        <activity android:name=".newolxpost"></activity>
     </application>
 
 </manifest>

@@ -43,7 +43,7 @@ public class MainAdapter  extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                     holder.post_likes.setText(String.valueOf(likes_count[0]) + " likes");
                 }
                 else{
-                    likes_count[0] = likes_count[0] -1;
+                    likes_count[0] = likes_count[0] - 1;
                     holder.post_likes.setText(String.valueOf(likes_count[0]) + " likes");
                 }
             }

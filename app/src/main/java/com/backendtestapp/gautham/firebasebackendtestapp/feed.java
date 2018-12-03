@@ -4,14 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -41,8 +37,10 @@ public class feed extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recycler_view);
         mDataset = new ArrayList<>();
 
+
+
         //Create data for the feed
-        for (int i = 0;i<100; i++){
+        for (int i = 0;i<10; i++){
             mDataset.add("Welcome to #" + i);
         }
 
@@ -62,14 +60,71 @@ public class feed extends AppCompatActivity {
         //Then we will get the GoogleSignInClient object from GoogleSignIn class
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton fab = findViewById(R.id.fabmain);
+        final FloatingActionButton fabpost = findViewById(R.id.fabpost);
+        final FloatingActionButton fabolx = findViewById(R.id.fabolx);
+        fabpost.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                closeFAB();
+                newpost();
+
+
+            }
+            private void closeFAB(){
+                fabpost.animate().translationY(0).setDuration(170);
+                fabolx.animate().translationY(0).setDuration(170);
+                fab.setImageResource(R.drawable.ic_outline_add_24px);
             }
         });
+        fabolx.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeFAB();
+                newolxpost();
+            }
+            private void closeFAB(){
+                fabpost.animate().translationY(0).setDuration(170);
+                fabolx.animate().translationY(0).setDuration(170);
+                fab.setImageResource(R.drawable.ic_outline_add_24px);
+            }
+        });
+        fab.setOnClickListener(new View.OnClickListener() {
+            boolean isFABOpen = false;
+            @Override
+            public void onClick(View view) {
+                if(!isFABOpen){
+                    showFABMenu();
+                }else{
+                    closeFABMenu();
+                }
+
+            }
+
+            private void closeFABMenu() {
+                isFABOpen=false;
+                fabpost.animate().translationY(0).setDuration(170);
+                fabolx.animate().translationY(0).setDuration(170);
+                fab.setImageResource(R.drawable.ic_outline_add_24px);
+            }
+
+            private void showFABMenu() {
+                isFABOpen=true;
+                fabpost.animate().translationY(-getResources().getDimension(R.dimen.standard_65)).setDuration(170);
+                fabolx.animate().translationY(-getResources().getDimension(R.dimen.standard_130)).setDuration(170);
+                fab.setImageResource(R.drawable.ic_outline_close_24px);
+
+            }
+
+        });
+    }
+
+    private void newolxpost() {
+        startActivity(new Intent(this, newolxpost.class));
+    }
+
+    private void newpost() {
+        startActivity(new Intent(this, newpost.class));
     }
 
     private void revokeUser() {
