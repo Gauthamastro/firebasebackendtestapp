@@ -26,7 +26,6 @@ import java.util.ArrayList;
 
 public class feed extends AppCompatActivity {
 
-    TextView textName, email,id,phone;
     FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private RecyclerView mRecyclerView;
@@ -52,8 +51,6 @@ public class feed extends AppCompatActivity {
         mAdapter = new MainAdapter(mDataset);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-
-
 
 
         mAuth = FirebaseAuth.getInstance();
