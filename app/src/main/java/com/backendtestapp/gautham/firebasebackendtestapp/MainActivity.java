@@ -1,6 +1,9 @@
 package com.backendtestapp.gautham.firebasebackendtestapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +30,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     GoogleSignInClient mGoogleSignInClient;
     //And also a Firebase Auth object
     FirebaseAuth mAuth;
+    DatabaseHelper mDatabaseHelper;
 
 
     @Override
@@ -69,11 +74,12 @@ public class MainActivity extends AppCompatActivity {
         signin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                signin.setText("Clicked");
                 signInfn();
             }
 
         });
+
+        mDatabaseHelper = new DatabaseHelper(this);
 
 
     }
@@ -130,80 +136,87 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            if (user.getEmail().contains("@nitc.ac.in")){
+                            if (user.getEmail().contains("@nitc.ac.in")) {
 
                                 feedfn(user);
 
-                            }
-                            else{
-                                user.delete();
-                                revokeUser();
+                            } else {
+                                revokeUser(user);
                             }
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Log.w(TAG, "Sign In Failed! ", task.getException());
                         }
                     }
                 });
     }
 
-    private void revokeUser() {
-        mAuth.signOut();
+    private void revokeUser(FirebaseUser user) {
+        user.delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User account deleted.");
+                            //Toast.makeText(MainActivity.this,"User Account deleted! ",Toast.LENGTH_LONG);
+                        }
+                    }
+                });
         mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(MainActivity.this,"You are not an NITCian! Get the hell out!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "You are not an NITCian! Get the hell out!", Toast.LENGTH_LONG).show();
                     }
                 });
     }
+
 
     private void feedfn(FirebaseUser user) {
 
         // Access a Cloud Firestore instance from your Activity
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        // Create a new user with a first and last name
+        //Users info
+        String username = user.getDisplayName();
         String email = user.getEmail();
-        final String[] splited  = email.split("@");
-        final String[] splited1  = splited[0].split("_");
+        String UID = user.getUid();
+        final String[] splited = email.split("@");
+        final String[] splited1 = splited[0].split("_");
         final char[] splitted_array = splited1[1].toCharArray();
-        final int year = Integer.parseInt(("20"+ String.valueOf(splitted_array[1])+ splitted_array[2]));
-        String branch = String.valueOf(splitted_array[splitted_array.length-2])+ splitted_array[splitted_array.length-1];
-        if (branch.equals("me")){
+        final int year = Integer.parseInt(("20" + String.valueOf(splitted_array[1]) + splitted_array[2]));
+        String branch = String.valueOf(splitted_array[splitted_array.length - 2]) + splitted_array[splitted_array.length - 1];
+        if (branch.equals("me")) {
             branch = "Mechanical Engg";
-        }
-        else if (branch.equals("cs")){
+        } else if (branch.equals("cs")) {
             branch = "Computer Science Engg";
-        }
-        else if (branch.equals("ee"))
-        {
+        } else if (branch.equals("ee")) {
             branch = "Electrical and Electronics Engg";
-        }
-        else if (branch.equals("ec"))
-        {
+        } else if (branch.equals("ec")) {
             branch = "Electronics and Communication Engg";
-        }
-        else if (branch.equals("ce")){
+        } else if (branch.equals("ce")) {
             branch = "Civil Engg";
-        }
-        else if (branch.equals("ar")){
+        } else if (branch.equals("ar")) {
             branch = "B. Arch";
-        }
-        else if (branch.equals("ch")){
+        } else if (branch.equals("ch")) {
             branch = "Chemical Engg";
-        }
-        else if (branch.equals("io")){
+        } else if (branch.equals("io")) {
             branch = "Biotechnology Engg";
         }
 
-
+        userobj userinfo = new userobj(UID, username, email, branch, year);
+        if (mDatabaseHelper.addData(userinfo)){
+            Toast.makeText(this,"Database created successfully!",Toast.LENGTH_LONG);
+        }
+        else{
+            Toast.makeText(this,"Database creation failed!",Toast.LENGTH_LONG);
+        }
         //User info obj
         Map<String, Object> obj = new HashMap<>();
-        obj.put("Name", user.getDisplayName() );
-        obj.put("Email", user.getEmail());
-        obj.put("Year of Admission ",year );
-        obj.put("Branch",branch);
+        obj.put("Name", username);
+        obj.put("Email", email);
+        obj.put("Year of Admission ", year);
+        obj.put("Branch", branch);
 
 // Add a new document with a generated ID
         db.collection("users")
@@ -220,7 +233,11 @@ public class MainActivity extends AppCompatActivity {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
-        finish();
-        startActivity(new Intent(this, feed.class));
-    }
+
+
+    finish();
+
+    startActivity(new Intent(this, feed .class));
 }
+    }
+

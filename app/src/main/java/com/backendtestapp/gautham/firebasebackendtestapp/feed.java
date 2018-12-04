@@ -1,12 +1,15 @@
 package com.backendtestapp.gautham.firebasebackendtestapp;
 
 import android.content.Intent;
+import android.nfc.Tag;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -18,6 +21,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class feed extends AppCompatActivity {
@@ -74,7 +80,7 @@ public class feed extends AppCompatActivity {
             private void closeFAB(){
                 fabpost.animate().translationY(0).setDuration(170);
                 fabolx.animate().translationY(0).setDuration(170);
-                fab.setImageResource(R.drawable.ic_outline_add_24px);
+                fab.setImageResource(R.drawable.ic_outline_keyboard_arrow_up_24px);
             }
         });
         fabolx.setOnClickListener(new View.OnClickListener() {
@@ -105,14 +111,14 @@ public class feed extends AppCompatActivity {
                 isFABOpen=false;
                 fabpost.animate().translationY(0).setDuration(170);
                 fabolx.animate().translationY(0).setDuration(170);
-                fab.setImageResource(R.drawable.ic_outline_add_24px);
+                fab.setImageResource(R.drawable.ic_outline_keyboard_arrow_up_24px);
             }
 
             private void showFABMenu() {
                 isFABOpen=true;
                 fabpost.animate().translationY(-getResources().getDimension(R.dimen.standard_65)).setDuration(170);
                 fabolx.animate().translationY(-getResources().getDimension(R.dimen.standard_130)).setDuration(170);
-                fab.setImageResource(R.drawable.ic_outline_close_24px);
+                fab.setImageResource(R.drawable.ic_baseline_expand_more_24px);
 
             }
 
