@@ -5,14 +5,15 @@ public class userobj {
     String Name;
     String Email;
     String Branch;
-    Integer Year;
+    Integer Year,Priority;
 
-    public userobj(String id,String name,String email,String branch,Integer year){
+    public userobj(String id,String name,String email,String branch,Integer year,Integer priority){
         this.UID = id;
         this.Name = name;
         this.Email = email;
         this.Branch = branch;
         this.Year = year;
+        this.Priority = priority;
     }
 
     public String getBranch() {
@@ -33,5 +34,9 @@ public class userobj {
 
     public String getUID() {
         return UID;
+    }
+
+    public Integer getPriority() {
+        return Priority;
     }
 }

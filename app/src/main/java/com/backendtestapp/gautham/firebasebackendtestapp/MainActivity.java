@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     GoogleSignInClient mGoogleSignInClient;
     //And also a Firebase Auth object
     FirebaseAuth mAuth;
-    DatabaseHelper mDatabaseHelper;
+    DatabaseHelperuserinfo mDatabaseHelper;
 
 
     @Override
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        mDatabaseHelper = new DatabaseHelper(this);
+        mDatabaseHelper = new DatabaseHelperuserinfo(this);
 
 
     }
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
             branch = "Biotechnology Engg";
         }
 
-        userobj userinfo = new userobj(UID, username, email, branch, year);
+        userobj userinfo = new userobj(UID, username, email, branch, year,0);
         if (mDatabaseHelper.addData(userinfo)){
             Toast.makeText(this,"Database created successfully!",Toast.LENGTH_LONG);
         }
@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         obj.put("Email", email);
         obj.put("Year of Admission ", year);
         obj.put("Branch", branch);
+        obj.put("Priority",0);
 
 // Add a new document with a generated ID
         db.collection("users")
