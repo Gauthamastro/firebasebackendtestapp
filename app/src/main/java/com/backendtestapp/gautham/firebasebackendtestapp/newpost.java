@@ -132,6 +132,7 @@ public class newpost extends AppCompatActivity {
                                 obj.put("IMGPATH",mpost_data.getImg_path());
                                 obj.put("PRIORITY",mpost_data.getPriority());
                                 obj.put("TIMESTAMP",mpost_data.getTime());
+                                obj.put("LIKES",mpost_data.getLikes());
 
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 CollectionReference ref_users = db.collection("users");
