@@ -1,16 +1,19 @@
 package com.backendtestapp.gautham.firebasebackendtestapp;
 
-
+import android.util.Log;
+import java.util.ArrayList;
 import java.util.Date;
 import java.sql.Timestamp;
-
 
 public class olxpost_data {
 
     //variables to upload
-    private String postUid,Uid,Username,Title,Content,Img_path=null,productType;
+    private String postUid,Uid,Username,Title,Content,productType;
+    private ArrayList CloudPath;
     private Integer Priority,likes=0;
     private Timestamp time;
+    private String Price;
+    private  String bargainable;
     public olxpost_data(String uid,String username,String title,String content,Integer priority){
         this.Uid = uid;
         this.Username = username;
@@ -21,9 +24,15 @@ public class olxpost_data {
         this.time = new Timestamp(date.getTime());
 
     }
-    public void setImg_path(String img_path) {
-        this.Img_path = img_path;
+
+    public void setPrice(String price) {
+        Price = price;
     }
+
+    public void setBargainable(String bargainable) {
+        this.bargainable = bargainable;
+    }
+
     public void setPostUid(String postUid){
         this.postUid = postUid;
     }
@@ -37,14 +46,24 @@ public class olxpost_data {
         return Content;
     }
     public String getImg_path() {
-        if (Img_path == null){
-            return "ITS A NULL";
+        if (CloudPath.size() == 0){
+            Log.d("IMG URI LIST","ITS A EMPTY LIST");
+            return null;
         }
         else{
-            return Img_path;
+            String img_path = "";
+            for(int i = 0;i < CloudPath.size();i++) {
+                img_path = img_path + CloudPath.get(i)+ "\n";
+            }
+            return img_path;
         }
 
     }
+
+    public void setCloudPath(ArrayList cloudPath) {
+        this.CloudPath = cloudPath;
+    }
+
     public String getPostUid() {
         return postUid;
     }
@@ -54,14 +73,19 @@ public class olxpost_data {
     public String getUid() {
         return Uid;
     }
-    public String getUsername() {
-        return Username;
-    }
     public Timestamp getTime() {
         return time;
     }
     public Integer getLikes(){return  likes;}
     public String getProductType() {
         return productType;
+    }
+
+    public String getBargainable() {
+        return bargainable;
+    }
+
+    public String getPrice() {
+        return Price;
     }
 }

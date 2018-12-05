@@ -91,86 +91,83 @@ public class newpost extends AppCompatActivity {
                 mpost_data.setPostUid(postUid);
 
 //COde related to image upload nad progressbar!
-                ImageView img = findViewById(R.id.displayimg);
-                img.setDrawingCacheEnabled(true);
-                img.buildDrawingCache();
-                Bitmap bitmap = img.getDrawingCache();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
-                img.setDrawingCacheEnabled(false);
-                byte[] data = baos.toByteArray();
-                String path = "users/"+Uid+ "/"+postUid+"/"+postUid+".png";
-                final StorageReference tempRef = storage.getReference(path);
-                //start the  progress bar now
-                final ProgressDialog dialog = new ProgressDialog(newpost.this);
-                dialog.setTitle("Uploading Post");
-                dialog.setMessage("Please wait while the post is being uploaded! \n Don't do anything nasty have faith in your network connection!");
-                dialog.setIndeterminate(true);
-                //disabe the all btns
-                Button add = findViewById(R.id.btn_add);
-                Button post = findViewById(R.id.btn_post);
-                add.setEnabled(false);
-                post.setEnabled(false);
-                dialog.show();
-                dialog.setCanceledOnTouchOutside(false);
-                tempRef.putFile(img_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        tempRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Log.d("IMAGE UPLOAD",uri.toString());
-                                mpost_data.setImg_path(uri.toString());
-                                mDatabaseHelperPosts.addData(mpost_data);//Adding data abt post to local database!
+                if (img_uri == null){
+                    toast("Select atlest one image u lazy ass!!!");
+                }
+                else{
+                    String path = "users/"+Uid+ "/posts/"+postUid+"/"+postUid+".png";
+                    final StorageReference tempRef = storage.getReference(path);
+                    //start the  progress bar now
+                    final ProgressDialog dialog = new ProgressDialog(newpost.this);
+                    dialog.setTitle("Uploading Post");
+                    dialog.setMessage("Please wait while the post is being uploaded! \n Don't do anything nasty have faith in your network connection!");
+                    dialog.setIndeterminate(true);
+                    //disabe the all btns
+                    Button add = findViewById(R.id.btn_add);
+                    Button post = findViewById(R.id.btn_post);
+                    add.setEnabled(false);
+                    post.setEnabled(false);
+                    dialog.show();
+                    dialog.setCanceledOnTouchOutside(false);
+                    tempRef.putFile(img_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            tempRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Log.d("IMAGE UPLOAD",uri.toString());
+                                    mpost_data.setImg_path(uri.toString());
+                                    mDatabaseHelperPosts.addData(mpost_data);//Adding data abt post to local database!
 
-                                //Mapping post data for firebase upload
-                                Map<String, Object> obj = new HashMap<>();
-                                obj.put("POSTUID",mpost_data.getPostUid());
-                                obj.put("UID",mpost_data.getUid());
-                                obj.put("TITLE",mpost_data.getTitle());
-                                obj.put("CONTENT",mpost_data.getContent());
-                                obj.put("IMGPATH",mpost_data.getImg_path());
-                                obj.put("PRIORITY",mpost_data.getPriority());
-                                obj.put("TIMESTAMP",mpost_data.getTime());
-                                obj.put("LIKES",mpost_data.getLikes());
+                                    //Mapping post data for firebase upload
+                                    Map<String, Object> obj = new HashMap<>();
+                                    obj.put("POSTUID",mpost_data.getPostUid());
+                                    obj.put("UID",mpost_data.getUid());
+                                    obj.put("TITLE",mpost_data.getTitle());
+                                    obj.put("CONTENT",mpost_data.getContent());
+                                    obj.put("IMGPATH",mpost_data.getImg_path());
+                                    obj.put("PRIORITY",mpost_data.getPriority());
+                                    obj.put("TIMESTAMP",mpost_data.getTime());
+                                    obj.put("LIKES",mpost_data.getLikes());
 
-                                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                CollectionReference ref_users = db.collection("users");
-                                ref_users.document(user.getUid()).collection("Posts").document(mpost_data.getPostUid()).set(obj)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void avoid) {
-                                                Log.d("NEWUSERPOST", " Document added to user section successfully!");
-                                                dialog.setMessage("Sending your contents to aliens...");
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w("NEWUSERPOST", "Error adding document to user section!", e);
-                                            }
-                                        });
-                                CollectionReference ref_feed = db.collection("feed");
-                                ref_feed.document(mpost_data.getPostUid()).set(obj)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void avoid) {
-                                                Log.d("NEWPOST", " Document added to feed  successfully!");
-                                                dialog.setMessage("Notifying the authorities!");
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w("NEWPOST", "Error adding document to feed ", e);
-                                            }
-                                        });
-                                dialog.dismiss();
-                                invokefeed();
-                            }
-                        });
-                    }
-                });
+                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                    CollectionReference ref_users = db.collection("users");
+                                    ref_users.document(user.getUid()).collection("Posts").document(mpost_data.getPostUid()).set(obj)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void avoid) {
+                                                    Log.d("NEWUSERPOST", " Document added to user section successfully!");
+                                                    dialog.setMessage("Sending your contents to aliens...");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("NEWUSERPOST", "Error adding document to user section!", e);
+                                                }
+                                            });
+                                    CollectionReference ref_feed = db.collection("feed");
+                                    ref_feed.document(mpost_data.getPostUid()).set(obj)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void avoid) {
+                                                    Log.d("NEWPOST", " Document added to feed  successfully!");
+                                                    dialog.setMessage("Notifying the authorities!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("NEWPOST", "Error adding document to feed ", e);
+                                                }
+                                            });
+                                    dialog.dismiss();
+                                    invokefeed();
+                                }
+                            });
+                        }
+                    });
+                }
                 //COde for image upload nad progress bar ends here
 
             }
@@ -179,8 +176,12 @@ public class newpost extends AppCompatActivity {
 
 }
 
+    private void toast(String s) {
+        Toast.makeText(this,s,Toast.LENGTH_LONG);
+    }
+
     private void invokefeed() {
-        Toast.makeText(this,"Uploaded successfully!",Toast.LENGTH_LONG);
+        Toast.makeText(this,"Uploaded successfully!",Toast.LENGTH_LONG).show();
         finish();
         startActivity(new Intent(this,feed.class));
     }

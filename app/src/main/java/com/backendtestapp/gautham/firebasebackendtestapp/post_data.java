@@ -59,10 +59,6 @@ public class post_data {
         return Uid;
     }
 
-    public String getUsername() {
-        return Username;
-    }
-
     public Timestamp getTime() {
         return time;
     }
