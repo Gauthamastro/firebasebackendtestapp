@@ -74,6 +74,13 @@ public class newpost extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                final ProgressDialog dialog = new ProgressDialog(newpost.this);
+                dialog.setTitle("Uploading Post");
+                dialog.setMessage("Please wait while the post is being uploaded! \n Don't do anything nasty have faith in your network connection!");
+                dialog.setIndeterminate(true);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+
                 //Get all the required data
                 String Uid=user.getUid(),Username,Title,Content,Img_path=null;
                 String postUid= String.valueOf(UUID.randomUUID());
@@ -98,17 +105,11 @@ public class newpost extends AppCompatActivity {
                     String path = "users/"+Uid+ "/posts/"+postUid+"/"+postUid+".jpg";
                     final StorageReference tempRef = storage.getReference(path);
                     //start the  progress bar now
-                    final ProgressDialog dialog = new ProgressDialog(newpost.this);
-                    dialog.setTitle("Uploading Post");
-                    dialog.setMessage("Please wait while the post is being uploaded! \n Don't do anything nasty have faith in your network connection!");
-                    dialog.setIndeterminate(true);
                     //disabe the all btns
                     Button add = findViewById(R.id.btn_add);
                     Button post = findViewById(R.id.btn_post);
                     add.setEnabled(false);
                     post.setEnabled(false);
-                    dialog.show();
-                    dialog.setCanceledOnTouchOutside(false);
                     Bitmap bitmap = bitmapfromUri(img_uri);
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);

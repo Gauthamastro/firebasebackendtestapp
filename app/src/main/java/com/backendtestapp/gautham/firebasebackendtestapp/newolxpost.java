@@ -117,17 +117,27 @@ public class newolxpost extends AppCompatActivity {
                 final String Price = String.valueOf(price.getText());
                 boolean goAhead = true;
                 String Uid = userinfo.getUID();
+                final ProgressDialog dialog = new ProgressDialog(newolxpost.this);
+                dialog.setTitle("Uploading Post");
+                dialog.setMessage("Please wait while the post is being uploaded! \n Don't do anything nasty have faith in your network connection!");
+                dialog.setIndeterminate(true);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
                 if (String.valueOf(title.getText()).contentEquals("")){
                     toast("Don't be lazy type some sense into title!");
                     goAhead = false;
+                    dialog.dismiss();
                 }
                 else if (String.valueOf(description.getText()).contentEquals("")){
                     toast("Come on buddy you can have some commitment to description atleast!");
                     goAhead = false;
+                    dialog.dismiss();
                 } else if (Price.contentEquals("")) {
                     toast("You are a Generous person it seems?! Enter some price idiot!");
                     goAhead = false;
+                    dialog.dismiss();
                 }
+                dialog.setMessage("Notifying the authorities!");
                 if (goAhead) {
                     final olxpost_data post_data = new olxpost_data(userinfo.getUID(), userinfo.getUserName(), String.valueOf(title.getText()), String.valueOf(description.getText()), 0);
                     post_data.setBargainable(negotiable);
@@ -137,15 +147,9 @@ public class newolxpost extends AppCompatActivity {
                     if (image_uri_list.size() == 0) {
                         toast("Atleast 1 picture should be sent to aliens !");
                     } else {
-                        final ProgressDialog dialog = new ProgressDialog(newolxpost.this);
-                        dialog.setTitle("Uploading Post");
-                        dialog.setMessage("Please wait while the post is being uploaded! \n Don't do anything nasty have faith in your network connection!");
-                        dialog.setIndeterminate(true);
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.show();
                         String postUid = post_data.getPostUid();
                         for (int i = 0; i < image_uri_list.size(); i++) {
-                            String path = "users/" + Uid + "/posts/" + postUid + "/" + postUid + String.valueOf(i) + ".jpg";
+                            String path = "users/" + Uid + "/olxposts/" + postUid + "/" + postUid + String.valueOf(i) + ".jpg";
                             final StorageReference tempRef = storage.getReference(path);
                             final int finalI = i;
                             Bitmap bitmap = bitmapfromUri(image_uri_list.get(i));
@@ -201,7 +205,6 @@ public class newolxpost extends AppCompatActivity {
                                                             @Override
                                                             public void onSuccess(Void avoid) {
                                                                 Log.d("NEWPOST", " Document added to feed  successfully!");
-                                                                dialog.setMessage("Notifying the authorities!");
                                                             }
                                                         })
                                                         .addOnFailureListener(new OnFailureListener() {
