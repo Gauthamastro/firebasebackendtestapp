@@ -29,6 +29,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -144,10 +145,14 @@ public class newolxpost extends AppCompatActivity {
                         dialog.show();
                         String postUid = post_data.getPostUid();
                         for (int i = 0; i < image_uri_list.size(); i++) {
-                            String path = "users/" + Uid + "/posts/" + postUid + "/" + postUid + String.valueOf(i) + ".png";
+                            String path = "users/" + Uid + "/posts/" + postUid + "/" + postUid + String.valueOf(i) + ".jpg";
                             final StorageReference tempRef = storage.getReference(path);
                             final int finalI = i;
-                            tempRef.putFile(image_uri_list.get(i)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            Bitmap bitmap = bitmapfromUri(image_uri_list.get(i));
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                            byte[] data = baos.toByteArray();
+                            tempRef.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     tempRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -215,6 +220,16 @@ public class newolxpost extends AppCompatActivity {
                         }}}}});
 
                         }
+
+    private Bitmap bitmapfromUri(Uri uri) {
+        try {
+            return MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this,"Failed to compress Image",Toast.LENGTH_LONG).show();
+            return null;
+        }
+    }
 
     private void invokeOlxfeed() {
         toast("Post uploaded!");

@@ -95,7 +95,7 @@ public class newpost extends AppCompatActivity {
                     toast("Select atlest one image u lazy ass!!!");
                 }
                 else{
-                    String path = "users/"+Uid+ "/posts/"+postUid+"/"+postUid+".png";
+                    String path = "users/"+Uid+ "/posts/"+postUid+"/"+postUid+".jpg";
                     final StorageReference tempRef = storage.getReference(path);
                     //start the  progress bar now
                     final ProgressDialog dialog = new ProgressDialog(newpost.this);
@@ -109,7 +109,11 @@ public class newpost extends AppCompatActivity {
                     post.setEnabled(false);
                     dialog.show();
                     dialog.setCanceledOnTouchOutside(false);
-                    tempRef.putFile(img_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    Bitmap bitmap = bitmapfromUri(img_uri);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                    byte[] data = baos.toByteArray();
+                    tempRef.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             tempRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -175,6 +179,16 @@ public class newpost extends AppCompatActivity {
         });
 
 }
+
+    private Bitmap bitmapfromUri(Uri img_uri) {
+        try {
+            return  MediaStore.Images.Media.getBitmap(this.getContentResolver(), img_uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this,"Failed to compress the image",Toast.LENGTH_LONG);
+            return null;
+        }
+    }
 
     private void toast(String s) {
         Toast.makeText(this,s,Toast.LENGTH_LONG);
