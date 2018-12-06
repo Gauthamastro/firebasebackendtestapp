@@ -46,7 +46,6 @@ public class MainAdapter  extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         Picasso.get()
                 .load(mDataset.get(position).getImg_path())
                 .fit()
-                .centerCrop()
                 .error(R.drawable.test).into(holder.img);
         holder.post_likes.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -30,7 +31,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -42,6 +46,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class feed extends AppCompatActivity {
 
     FirebaseAuth mAuth;
@@ -50,8 +56,8 @@ public class feed extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
     private ArrayList<post_data> mDataset;
+    private ListenerRegistration postListener;
     private FirebaseFirestore fs;
-    String Url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,39 +205,38 @@ public class feed extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         //if the user is not logged in
         //opening the login activity
         if (mAuth.getCurrentUser() == null) {
             finish();
             startActivity(new Intent(this, MainActivity.class));
         }
+        else{
+            fs = FirebaseFirestore.getInstance();
+            postListener = fs.collection("feed").orderBy("Time",Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable final QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                        for (DocumentSnapshot d : list) {
+                            post_data data = d.toObject(post_data.class);
+                            Log.d("CLASSTEST", data.getImg_path());
+                            Log.d("TITLETEST", data.getTitle());
+                            mDataset.add(data);
+
+                        }
+                        mRecyclerView.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
+
+                    }
+                }});
+                }
+            }
+            
+    @Override
+    protected void onStop() {
+        super.onStop();
+        postListener.remove();
     }
-
-    public class DownloadimageTask extends AsyncTask<String,String,String>
-    {
-
-        @Override
-        protected String doInBackground(String... strings) {
-
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-        }
-    }
-
 }
 
