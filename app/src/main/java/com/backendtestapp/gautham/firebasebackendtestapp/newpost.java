@@ -35,7 +35,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -94,7 +96,16 @@ public class newpost extends AppCompatActivity {
                 Content = String.valueOf(content.getText());
                 Username = String.valueOf(username.getText());
 
-                final post_data mpost_data = new post_data(Uid,Username,Title,Content,Priority);
+                final post_data mpost_data = new post_data();
+                mpost_data.setContent(Content);
+                mpost_data.setUid(Uid);
+                mpost_data.setLikes(0);
+                mpost_data.setUsername(Username);
+                mpost_data.setTitle(Title);
+                Date date = new Date();
+                Timestamp time = new Timestamp(date.getTime());
+                mpost_data.setTime(time);
+                mpost_data.setPriority(Priority);
                 mpost_data.setPostUid(postUid);
 
 //COde related to image upload nad progressbar!
@@ -126,14 +137,15 @@ public class newpost extends AppCompatActivity {
 
                                     //Mapping post data for firebase upload
                                     Map<String, Object> obj = new HashMap<>();
-                                    obj.put("POSTUID",mpost_data.getPostUid());
-                                    obj.put("UID",mpost_data.getUid());
-                                    obj.put("TITLE",mpost_data.getTitle());
-                                    obj.put("CONTENT",mpost_data.getContent());
-                                    obj.put("IMGPATH",mpost_data.getImg_path());
-                                    obj.put("PRIORITY",mpost_data.getPriority());
-                                    obj.put("TIMESTAMP",mpost_data.getTime());
-                                    obj.put("LIKES",mpost_data.getLikes());
+                                    obj.put("PostUid",mpost_data.getPostUid());
+                                    obj.put("Uid",mpost_data.getUid());
+                                    obj.put("Title",mpost_data.getTitle());
+                                    obj.put("Content",mpost_data.getContent());
+                                    obj.put("Img_path",mpost_data.getImg_path());
+                                    obj.put("Priority",mpost_data.getPriority());
+                                    obj.put("Time",mpost_data.getTime());
+                                    obj.put("Likes",mpost_data.getLikes());
+                                    obj.put("Username",mpost_data.getUsername());
 
                                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                                     CollectionReference ref_users = db.collection("users");

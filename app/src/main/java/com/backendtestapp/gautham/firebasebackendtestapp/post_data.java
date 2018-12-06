@@ -2,31 +2,56 @@ package com.backendtestapp.gautham.firebasebackendtestapp;
 
 
 import java.util.Date;
-import java.sql.Timestamp;
 
 
 public class post_data {
 
     //variables to upload
-    private String postUid,Uid,Username,Title,Content,Img_path=null;
-    private Integer Priority,likes=0;
-    private Timestamp time;
-    public post_data(String uid,String username,String title,String content,Integer priority){
-        this.Uid = uid;
-        this.Username = username;
-        this.Title = title;
-        this.Content = content;
-        this.Priority =priority;
-        Date date = new Date();
-        this.time = new Timestamp(date.getTime());
+    private String PostUid,Uid,Username,Title,Content,Img_path=null;
+    private Integer Priority,Likes=0;
+    private Date Time;
+    public post_data(){
 
+    }
+
+    public void setContent(String content) {
+        this.Content = content;
+    }
+
+    public void setLikes(Integer likes) {
+        this.Likes = likes;
+    }
+
+    public void setPriority(Integer priority) {
+        this.Priority = priority;
+    }
+
+    public void setTime(Date time) {
+        this.Time = time;
+    }
+
+    public void setTitle(String title) {
+        this.Title = title;
+    }
+
+    public void setUid(String uid) {
+        this.Uid = uid;
+    }
+
+    public void setUsername(String username) {
+        this.Username = username;
     }
 
     public void setImg_path(String img_path) {
         this.Img_path = img_path;
     }
+
+    public String getUsername() {
+        return Username;
+    }
+
     public void setPostUid(String postUid){
-        this.postUid = postUid;
+        this.PostUid = postUid;
     }
 
     public Integer getPriority() {
@@ -48,7 +73,7 @@ public class post_data {
     }
 
     public String getPostUid() {
-        return postUid;
+        return PostUid;
     }
 
     public String getTitle() {
@@ -59,8 +84,8 @@ public class post_data {
         return Uid;
     }
 
-    public Timestamp getTime() {
-        return time;
+    public Date getTime() {
+        return Time;
     }
-    public Integer getLikes(){return  likes;}
+    public Integer getLikes(){return  Likes;}
 }
